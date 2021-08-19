@@ -23,16 +23,16 @@ export class BooksService {
       .pipe(catchError(this.handleError<Book[]>('getAllBooks', [])));
   }
 
-  getBookById(id: number): Observable<Book> {
+  getBookById(id: string): Observable<Book> {
     return this.http
       .get<Book>(`${this.url}/books/${id}`)
       .pipe(catchError(this.handleError<Book>(`getBookById id=${id}`)));
   }
 
-  updateBook(book: Book): Observable<any> {
+  updateBook(book: Book): Observable<Book> {
     return this.http
-      .put(`${this.url}/books`, book, this.httpOptions)
-      .pipe(catchError(this.handleError<any>(`updateBook`)));
+      .put<Book>(`${this.url}/books`, book, this.httpOptions)
+      .pipe(catchError(this.handleError<Book>(`updateBook`)));
   }
 
   addBook(book: Book): Observable<Book> {
@@ -47,7 +47,7 @@ export class BooksService {
       .pipe(catchError(this.handleError<Book>(`deleteBook`)));
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
+  handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} failed: ${error.message}`);
 
