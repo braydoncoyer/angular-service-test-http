@@ -1,13 +1,17 @@
-import { TestBed } from '@angular/core/testing';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import {
+  mockBook1,
+  mockBook2,
+  mockBook3,
+  mockBookArray,
+} from 'src/mocks/mockBooks';
 
-import { BooksService } from './books.service';
-import { mockBook1, mockBook2, mockBookArray } from 'src/mocks/mockBooks';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Book } from '../book';
+import { BooksService } from './books.service';
+import { TestBed } from '@angular/core/testing';
 
 describe('BooksService', () => {
   let service: BooksService;
@@ -44,25 +48,6 @@ describe('BooksService', () => {
     req.flush(mockBookArray);
   });
 
-  // it('should call the handleError function from getAllBooks if an error occurs', (done: DoneFn) => {
-  //   const emesg = 'deliberate 500 error';
-
-  //   service.getAllBooks().subscribe(
-  //     (data) => fail('Should have failed with a 500'),
-  //     (error: HttpErrorResponse) => {
-  //       expect(error.error.message).toEqual(emesg, 'message');
-  //     }
-  //   );
-
-  //   const req = httpController.expectOne(`${url}/books`);
-
-  //   const mockError = new ErrorEvent('Network error', {
-  //     message: emesg,
-  //   });
-
-  //   req.error(mockError);
-  // });
-
   it('should call getBookById and return the appropriate Book', () => {
     const id = '1';
 
@@ -95,5 +80,31 @@ describe('BooksService', () => {
     });
 
     req.flush(updatedBook);
+  });
+
+  it('should call addBook and the API should return the book that was added', () => {
+    service.addBook(mockBook2).subscribe((data) => {
+      expect(data).toEqual(mockBook2);
+    });
+
+    const req = httpController.expectOne({
+      method: 'POST',
+      url: `${url}/books`,
+    });
+
+    req.flush(mockBook2);
+  });
+
+  it('should call deleteBook and return the book that was deleted from the API', () => {
+    service.deleteBook(mockBook3).subscribe((data) => {
+      expect(data).toEqual(mockBook3);
+    });
+
+    const req = httpController.expectOne({
+      method: 'DELETE',
+      url: `${url}/books/${mockBook3.id}`,
+    });
+
+    req.flush(mockBook3);
   });
 });
